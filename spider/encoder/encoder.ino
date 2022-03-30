@@ -1,37 +1,42 @@
 //####################################################
 //#   encoder_module
+//#   Copyright (c) 2022 Tomas Picha
+//#   programmed by: Tomas Picha
 //####################################################
 
 
 // DESCRTIPTION: -   
 
-// HW: Aruino MEGA 2560
+// HW: Aruino nano
 
 /*----------------------- DEPENDENCES ----------------------------------*/
 
 
 /*----------------------- DEFINITION -----------------------------------*/
+byte counter1_channel1 = A0;
+byte counter1_channel2 = A1;
+byte counter2_channel1 = A2;
+byte counter2_channel2 = A3;
+
 int enc_counter_1 = 0; // value of first encoder
 int enc_counter_2 = 0; // value of secondencoder
 
-byte interrupt_pin2 = 2; //number of input pin
-byte interrupt_pin3 = 3; //number of input pin
-byte interrupt_pin18= 18; //number of input pin
-byte interrupt_pin19 = 19; //number of input pin
+byte encoder1_status = 0;
+byte encoder2_status = 0;
+
+
+byte encoder_status_tabel [] = {};
 
 
 
 void setup () {
   serial_initial();
   pins_initial();
-  interrupts_initial();
 }
 
 
 void loop (){
+  encoder_read();
 
-  Serial.print(enc_counter_1);
-  Serial.print("___");
-  Serial.println(enc_counter_2);
 
 }

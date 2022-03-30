@@ -1,32 +1,47 @@
 /*----------------------serial-initialization------------------------------------*/
 void serial_initial(){
-  Serial.begin(2000000); 
+  Serial.begin(9600); 
   while (!Serial) {
       ; 
   }
 }
 
+
 /*----------------------pins-initialization------------------------------------*/
 void pins_initial(){
-
-  pinMode(interrupt_pin2, INPUT_PULLUP); // settings of external pullup event
-  pinMode(interrupt_pin3, INPUT_PULLUP); // settings of external pullup event
-  pinMode(interrupt_pin18, INPUT_PULLUP); // settings of external pullup event
-  pinMode(interrupt_pin19, INPUT_PULLUP); // settings of external pullup event
-
-}
-
-/*----------------------interrupts-initialization------------------------------------*/
-void interrupts_initial(){
-
-  attachInterrupt(0, interrupt_0, RISING);
-  attachInterrupt(1, interrupt_1, RISING);
-  attachInterrupt(2, interrupt_2, RISING);
-  attachInterrupt(3, interrupt_3, RISING);
   
+  pinMode (counter1_channel1,INPUT);
+  pinMode (counter1_channel2,INPUT);
+  pinMode (counter2_channel1,INPUT);
+  pinMode (counter2_channel2,INPUT);
+
 }
 
-/*----------------------interrupt_0------------------------------------*/
+/*----------------------encoder_read------------------------------------*/
+void encoder_read(){
+  byte temp = 0;
+
+  encoder1_status = encoder1_status & B11;
+  encoder1_status = encoder1_status << 2;
+
+  encoder2_status = encoder2_status & B11;
+  encoder2_status = encoder2_status << 2;
+  
+  temp = digitalRead(counter1_channel1);
+  temp = temp << 1;
+  encoder1_status = encoder1_status | temp;
+  encoder1_status = encoder1_status | digitalRead(counter1_channel2);
+  
+  temp = 0;
+
+  temp = digitalRead(counter2_channel1);
+  temp = temp << 1;
+  encoder2_status = encoder2_status | temp;
+  encoder2_status = encoder2_status | digitalRead(counter2_channel2);
+
+  }
+
+/*----------------------interrupt_0------------------------------------
 void interrupt_0(){
 
   if(digitalRead(interrupt_pin3)==LOW) { // checking direction of encoder 1
@@ -37,7 +52,7 @@ void interrupt_0(){
   
 }
 
-/*----------------------interrupt_1------------------------------------*/
+/*----------------------interrupt_1------------------------------------
 void interrupt_1(){
 
   if(digitalRead(interrupt_pin2)==LOW) { // checking direction of encoder 1
@@ -46,26 +61,4 @@ void interrupt_1(){
     enc_counter_1++;
   }
   
-}
-
-/*----------------------interrupt_2------------------------------------*/
-void interrupt_2(){
-
-  if(digitalRead(interrupt_pin19)==LOW) { // checking direction of encoder 2
-    enc_counter_2 ++;
-  }else{
-    enc_counter_2 --;
-  }
-  
-}
-
-/*----------------------interrupt_3------------------------------------*/
-void interrupt_3(){
-
-  if(digitalRead(interrupt_pin18)==LOW) { // checking direction of encoder 2
-    enc_counter_2--;
-  }else{
-    enc_counter_2++;
-  }
-  
-}
+}*/
