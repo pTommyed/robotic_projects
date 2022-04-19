@@ -63,19 +63,38 @@ void encoders_counting() {
   enc_counter_2 = enc_counter_2 + encoder_status_tabel[encoder2_status];
 }
 
-/*--------------------------interupt_function_timer_1----------------*/
-ISR(TIMER1_COMPA_vect) {
-  timer1_flag = 1;
+/*--------------------------interupt_function_timer_0----------------*/
+ISR(TIMER0_COMPA_vect) {
+  timer0_flag = 1;
+}
+
+/*--------------------------interupt_function_timer_2----------------*/
+ISR(TIMER2_COMPA_vect) {
+  timer2_counter = timer2_counter + 1;
+  if (timer2_counter == timer2_final_number) {
+    timer2_flag = 1;
+  }
 }
 
 
-/*--------------------------timer1-initialization------------------------------------------*/
-void timer1_initial() {
+/*--------------------------timer0-initialization------------------------------------------*/
+void timer0_initial() {
   cli();  // disable all interrupts
 
-  OCR1A = 50;                                         // compareregister 16MHz/64/5kHz = 50 (max 255)
-  TCCR1A |= (1 << CS10) | (1 << CS11) | (0 << CS12);  // 64 prescaler
-  TIMSK1 |= (1 << OCIE1A);                            // enable timer interrupt ( interrupt is active- when is value of TCNT1 (value of counter) in match with OCR1A)
+  OCR0A = 50;                                         // compareregister 16MHz/64/5kHz = 50 (max 255)
+  TCCR0B |= (1 << CS00) | (1 << CS01) | (0 << CS02);  // 64 prescaler
+  TIMSK0 |= (1 << OCIE0A);                            // enable timer interrupt ( interrupt is active- when is value of TCNT0 (value of counter) in match with OCR0A)
+
+  sei();  // enable all interrupts
+}
+
+/*--------------------------timer2-initialization------------------------------------------*/
+void timer2_initial() {
+  cli();  // disable all interrupts
+
+  OCR2A = 250;                                         // compareregister 16MHz/128/5kHz = 6250 / 250 = 25   (max 255)
+  TCCR2B |= (1 << CS20) | (0 << CS21) | (1 << CS22);  // 128 prescaler
+  TIMSK2 |= (1 << OCIE2A);                            // enable timer interrupt ( interrupt is active- when is value of TCNT2 (value of counter) in match with OCR2A)
 
   sei();  // enable all interrupts
 }
