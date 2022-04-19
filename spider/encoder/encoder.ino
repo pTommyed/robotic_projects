@@ -5,7 +5,7 @@
 //####################################################
 
 
-// DESCRTIPTION: -   
+// DESCRTIPTION: -   sampling frequency 5 kHz
 
 // HW: Aruino nano
 
