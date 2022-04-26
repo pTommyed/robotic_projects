@@ -29,9 +29,6 @@ static int encoder_status_tabel [] = {0,-1,1,10,1,0,10,-1,-1,10,0,1,10,1,-1,0};
 
 
 bool timer0_flag = 0;
-bool timer2_flag = 0;
-int timer2_counter = 0; // count of timer2 interrupt -- TIMER2_COMPA_vect 
-static int timer2_final_number = 25; // final count of timer2_counter to 20 Hz
 
 
 
@@ -41,7 +38,6 @@ void setup () {
   pins_initial();
   encoders_init();
   timer0_initial();
-  timer2_initial();
 }
 
 /*----------------------- LOOP -----------------------------------*/
@@ -54,10 +50,4 @@ void loop (){
     //serial_prnt();
   }
 
-  if (timer2_flag == 1) {
-    timer2_flag = 0;
-    timer2_counter = 0;
-
-    serial_prnt();
-  } 
 }
