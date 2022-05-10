@@ -14,6 +14,8 @@
 /*----------------------- DEPENDENCES ----------------------------------*/
 #include <mcp_can.h> // CAN lib
 #include <SPI.h> // lib for SPI bus
+#include <stdint.h> //due to wdt
+#include <avr/wdt.h> // wdt lib
 
 
 /*----------------------- DEFINITION -----------------------------------*/
@@ -60,6 +62,7 @@ void setup () {
   encoders_init();
   can_initial();
   timer0_initial();
+  wdt_enable(WDTO_500MS);  //wdt reset_15MS; 30MS; 60ms; 120MS; 250MS; 500MS; 1S; 2S; 4S; 8S
 }
 
 /*----------------------- LOOP -----------------------------------*/
@@ -68,4 +71,5 @@ void loop (){
   timer0_flag_check ();
   can_message_recive_check ();
   buf_transmit_hb_clear();
+  wdt_reset (); // Reset watchdog counter
 }
