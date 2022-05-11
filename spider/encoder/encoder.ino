@@ -19,6 +19,25 @@
 
 
 /*----------------------- DEFINITION -----------------------------------*/
+
+enum states_node {
+  bootup,
+  preoperation,
+  operation,
+};
+
+states_node state_node = bootup;
+
+static int bootup_transmit = 0;  //0x00
+static int preoperation_transmit = 127; //0x7f
+static int operation_transmit = 133; //0x85
+
+static int preoperation_recive = 128; //0x80
+static int operation_recive = 1; //0x01
+static int reset_node_recive = 129; //0x81
+static int reset_comunication_recive = 130; //0x82
+
+
 byte counter1_channelA = A0;
 byte counter1_channelB = A1;
 byte counter2_channelA = A2;
@@ -36,27 +55,42 @@ static int encoder_status_tabel [] = {0,-1,1,10,1,0,10,-1,-1,10,0,1,10,1,-1,0};
 
 
 bool timer0_flag = 0;
-bool nmt_recive_flag = 0;
+bool hb_flag = 0;
+bool sync_recive_flag = 0;
+
+int timer0_counter =0;
+static int timer0_1s_count = 977;
 
 
 MCP_CAN CAN(cs_pin);
 
-static int can_adress_pdo = 131; //transmit encoder counters values
-static int can_adress_hb = 130; //  transmit HB adress
-static int can_adress_nmt = 0; // Sync adress
+static int id_node = 2; // 0x02 can adress of node
+static int can_adress_pdo_encoder = 384 + id_node; //0x180 transmit encoder counters values
+static int can_adress_pdo_error = 640 + id_node; //0x280 transmit errors codes
+static int can_adress_hb = 1792 + id_node; //0x700  transmit HB status
+static int can_adress_nmt = 0; //0x00 change states
+static int can_adress_sync = 80; //0X50 sync adress
 int  can_message_id_recive; //can message of receive message
 byte buf_recive[8]; //buffer of receive message
-byte buf_transmit_hb[2] = {0,0}; //buffer of transmit message
-byte buf_transmit_pdo[8]; //buffer of transmit message
+byte buf_transmit_hb [] = {0}; //buffer of transmit message
+byte buf_transmit_pdo_encoders[8]; //buffer of transmit message encoders status
+byte buf_transmit_pdo_erros [] = {0}; //buffer of transmit message errors status
 unsigned char len = 0; // lenght of receive message
+byte len_transmit = 0; // lenght of transmit can message
+static byte len_hb = 1;
+static byte len_pdo_encoders = 8;
+static byte len_pdo_errors = 1; 
 
 byte cycle_counter = 0; 
 
 byte read_message_error = 1;
 byte clear_message_error = 2;
+byte send_message_error = 3;
+byte encoder_skip_error = 4;
 
 /*----------------------- SETUP -----------------------------------*/
 void setup () {
+  state_node = preoperation;
   serial_initial();
   pins_initial();
   encoders_init();
@@ -67,9 +101,22 @@ void setup () {
 
 /*----------------------- LOOP -----------------------------------*/
 void loop (){
+  switch (state_node) {
+    case preoperation:
+
+      break;
+    case operation:
+
+      break;
+  }
+  
+  
+  
   counter_cycle();
   timer0_flag_check ();
+  hb_flag_check ();
   can_message_recive_check ();
   buf_transmit_hb_clear();
+  can_message_clear();
   wdt_reset (); // Reset watchdog counter
 }
