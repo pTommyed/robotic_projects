@@ -38,7 +38,7 @@ void can_filters_initial(){
     Serial.print("-");
     delay(10);
   }
-  while(CAN.init_Filt(1, 0, 0x00) != 0){
+  while(CAN.init_Filt(1, 0, 0x50) != 0){
     Serial.print("-");
     delay(100);
   }
