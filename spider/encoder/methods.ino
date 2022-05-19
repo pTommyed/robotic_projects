@@ -116,7 +116,6 @@ void timer0_flag_check () {
 void hb_flag_check () {
   if (hb_flag == 1) {
     hb_flag = 0;
-    
     sending_can_message (can_adress_hb, buf_transmit_hb, len_hb);
   }
 }
@@ -126,9 +125,32 @@ void hb_flag_check () {
 void can_message_recive_check () {
   if (CAN.checkReceive() == CAN_MSGAVAIL) {
     can_message_recive();
+
+    if (can_message_id_recive == can_adress_sync) {
+      sync_message_rec_flag = 1;
+    } else if (can_message_id_recive == can_adress_nmt) {
+        if ((buf_recive[1] ==0x00)||(buf_recive[1] == id_node)){ // pozn. zeptat se na jaká tam má být adresa 
+          switch (buf_recive[0]) {
+            case 0x01:
+              state_node = operation;
+              buf_transmit_hb [0] = operation_transmit;
+              break;
+            case 0x80:
+              state_node = preoperation;
+              buf_transmit_hb [0] = preoperation_transmit;
+              break;
+            case 0x81:
+              state_node = reset;
+              buf_transmit_hb [0] = bootup_transmit;
+              break;
+            case 0x82:
+              state_node = reset;
+              buf_transmit_hb [0] = bootup_transmit;
+              break;
+          }
+        }
+      }
     //can_msg_to_serial();
-    //serial_prnt_buf_transmit_hb();
-    sending_can_message (can_adress_pdo_encoder, buf_transmit_pdo_encoders, len_pdo_encoders);
   }
 }
 
@@ -137,7 +159,8 @@ void can_message_recive_check () {
 void can_message_clear() {
   while (CAN.clearMsg() != MCP2515_OK) {
     if (timer0_flag == 1) {
-      buf_transmit_pdo_erros[1] = clear_message_error;
+      buf_transmit_pdo_erros[2] = clear_message_error;
+      buf_transmit_pdo_erros[0] = 1;
       return;
     }
   }
@@ -147,15 +170,13 @@ void can_message_clear() {
 
 void can_message_recive() {
   can_message_id_recive = CAN.getCanId();
-    if (can_message_id_recive == can_adress_sync) {
-     sync_recive_flag = 1;
-     while (CAN.readMsgBuf(&len, buf_recive) != CAN_OK) {
-       if (timer0_flag == 1) {
-         buf_transmit_pdo_erros[0] = read_message_error;
-         return;
-       }
-     }
+  while (CAN.readMsgBuf(&len, buf_recive) != CAN_OK) {
+    if (timer0_flag == 1) {
+      buf_transmit_pdo_erros[1] = read_message_error;
+      buf_transmit_pdo_erros[0] = 1;
+      return;
     }
+  }
 }
 
 /*----------------------serial-print_recive_can_message------------------------------------*/
@@ -177,9 +198,10 @@ void can_msg_to_serial(){
 /*-------------------------- Sending CAN message to APU -------------------------*/
 
 void sending_can_message (int can_adress, byte *message_buffer, byte lenght_message) {
-  while (CAN.sendMsgBuf(0x0+can_adress, 0, lenght_message, message_buffer) != 0) {
+  while (CAN.sendMsgBuf(can_adress, 0, lenght_message, message_buffer) != 0) {
     if (timer0_flag == 1) {
-      buf_transmit_pdo_erros[2] = send_message_error;
+      buf_transmit_pdo_erros[3] = send_message_error;
+      buf_transmit_pdo_erros[0] = 1;
       return;
     }  
   }
@@ -197,23 +219,6 @@ void serial_prnt_buf_transmit_hb() {
   Serial.print(buf_transmit_hb[0]);
   Serial.print("##");
   Serial.println(buf_transmit_hb[1]);
-}
-
-/*---------------------------- counter_cycle--------------------------------------------------------------------------------------------------*/
-
-void counter_cycle(){
-  buf_transmit_hb [0] = cycle_counter;
-  if (cycle_counter == 255){
-    cycle_counter = 1;
-  } else {
-     cycle_counter = cycle_counter + 1;
-    }
-}
-
-/*--------------------------- buf_transmit_hb_clear----------------------------------------------------------------------------------*/
-
-void buf_transmit_hb_clear(){
-  buf_transmit_hb [0] = 0;
 }
 
 /*----------------------encoder_read------------------------------------*/
@@ -252,13 +257,15 @@ void encoders_counting() {
   if(abs(encoder_status_tabel[encoder1_status]) != 10) {
     enc_counter_1 = enc_counter_1 + encoder_status_tabel[encoder1_status];
   } else {
-    buf_transmit_pdo_erros [3] = encoder_skip_error; 
+    buf_transmit_pdo_erros [4] = encoder_skip_error; 
+    buf_transmit_pdo_erros[0] = 1;
   }
   
   if(abs(encoder_status_tabel[encoder2_status]) != 10) {
     enc_counter_2 = enc_counter_2 + encoder_status_tabel[encoder2_status];
   } else {
-    buf_transmit_pdo_erros [3] = encoder_skip_error; 
+    buf_transmit_pdo_erros [4] = encoder_skip_error; 
+    buf_transmit_pdo_erros[0] = 1;
   }
 }
 
