@@ -117,6 +117,25 @@ void hb_flag_check () {
   if (hb_flag == 1) {
     hb_flag = 0;
     sending_can_message (can_adress_hb, buf_transmit_hb, len_hb);
+
+    error_check ();
+  }
+}
+
+/*-------------------------- error_check  -------------------------*/
+
+void error_check () {
+  if (buf_transmit_pdo_erros[0] == 1) {
+    sending_can_message (can_adress_pdo_error, buf_transmit_pdo_erros, len_pdo_errors);
+    buf_transmit_pdo_erros_clear ();
+  }
+}
+
+/*-------------------------- buf_transmit_pdo_erros_clear  -------------------------*/
+
+void buf_transmit_pdo_erros_clear () {
+  for (int temp = 0; temp < len_pdo_errors; temp++) {
+    buf_transmit_pdo_erros [temp] = 0;
   }
 }
 
@@ -131,19 +150,19 @@ void can_message_recive_check () {
     } else if (can_message_id_recive == can_adress_nmt) {
         if ((buf_recive[1] ==0x00)||(buf_recive[1] == id_node)){ // pozn. zeptat se na jaká tam má být adresa 
           switch (buf_recive[0]) {
-            case 0x01:
+            case operation_recive:
               state_node = operation;
               buf_transmit_hb [0] = operation_transmit;
               break;
-            case 0x80:
+            case preoperation_recive:
               state_node = preoperation;
               buf_transmit_hb [0] = preoperation_transmit;
               break;
-            case 0x81:
+            case reset_node_recive:
               state_node = reset;
               buf_transmit_hb [0] = bootup_transmit;
               break;
-            case 0x82:
+            case reset_comunication_recive:
               state_node = reset;
               buf_transmit_hb [0] = bootup_transmit;
               break;
