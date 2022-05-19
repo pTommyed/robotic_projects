@@ -34,11 +34,11 @@ void can_mask_initial(){
 
 /*-----------------------CAN filters initialization--------------------------------*/
 void can_filters_initial(){
-  while(CAN.init_Filt(0, 0, 0x00) != 0){
+  while(CAN.init_Filt(0, 0, can_adress_nmt) != 0){
     Serial.print("-");
     delay(10);
   }
-  while(CAN.init_Filt(1, 0, 0x50) != 0){
+  while(CAN.init_Filt(1, 0, can_adress_sync) != 0){
     Serial.print("-");
     delay(100);
   }
@@ -137,7 +137,7 @@ void can_message_recive_check () {
 void can_message_clear() {
   while (CAN.clearMsg() != MCP2515_OK) {
     if (timer0_flag == 1) {
-      buf_transmit_hb[1] = clear_message_error;
+      buf_transmit_pdo_erros[1] = clear_message_error;
       return;
     }
   }
@@ -151,7 +151,7 @@ void can_message_recive() {
      sync_recive_flag = 1;
      while (CAN.readMsgBuf(&len, buf_recive) != CAN_OK) {
        if (timer0_flag == 1) {
-         buf_transmit_hb[1] = read_message_error;
+         buf_transmit_pdo_erros[0] = read_message_error;
          return;
        }
      }
@@ -179,7 +179,7 @@ void can_msg_to_serial(){
 void sending_can_message (int can_adress, byte *message_buffer, byte lenght_message) {
   while (CAN.sendMsgBuf(0x0+can_adress, 0, lenght_message, message_buffer) != 0) {
     if (timer0_flag == 1) {
-      buf_transmit_hb[1] = send_message_error;
+      buf_transmit_pdo_erros[2] = send_message_error;
       return;
     }  
   }
@@ -252,13 +252,13 @@ void encoders_counting() {
   if(abs(encoder_status_tabel[encoder1_status]) != 10) {
     enc_counter_1 = enc_counter_1 + encoder_status_tabel[encoder1_status];
   } else {
-    buf_transmit_pdo_erros [0] = encoder_skip_error; 
+    buf_transmit_pdo_erros [3] = encoder_skip_error; 
   }
   
   if(abs(encoder_status_tabel[encoder2_status]) != 10) {
     enc_counter_2 = enc_counter_2 + encoder_status_tabel[encoder2_status];
   } else {
-    buf_transmit_pdo_erros [0] = encoder_skip_error; 
+    buf_transmit_pdo_erros [3] = encoder_skip_error; 
   }
 }
 

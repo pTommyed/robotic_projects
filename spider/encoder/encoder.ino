@@ -64,17 +64,17 @@ static int timer0_1s_count = 977;
 
 MCP_CAN CAN(cs_pin);
 
-static int id_node = 2; // 0x02 can adress of node
-static int can_adress_pdo_encoder = 384 + id_node; //0x180 transmit encoder counters values
-static int can_adress_pdo_error = 640 + id_node; //0x280 transmit errors codes
-static int can_adress_hb = 1792 + id_node; //0x700  transmit HB status
-static int can_adress_nmt = 0; //0x00 change states
-static int can_adress_sync = 80; //0X50 sync adress
+static int id_node = 0x02; // 0x02 can adress of node
+static int can_adress_pdo_encoder = 0x180 + id_node; //0x180 transmit encoder counters values
+static int can_adress_pdo_error = 0x280 + id_node; //0x280 transmit errors codes
+static int can_adress_hb = 0x700 + id_node; //0x700  transmit HB status
+static int can_adress_nmt = 0x00; //0x00 change states
+static int can_adress_sync = 0x50; //0X50 sync adress
 int  can_message_id_recive; //can message of receive message
 byte buf_recive[8]; //buffer of receive message
 byte buf_transmit_hb [] = {0}; //buffer of transmit message
 byte buf_transmit_pdo_encoders[8]; //buffer of transmit message encoders status
-byte buf_transmit_pdo_erros [] = {0}; //buffer of transmit message errors status
+byte buf_transmit_pdo_erros [] = {0,0,0,0}; //buffer of transmit message errors status buf[]= {read_message_error, clear_message_error, send_message_error, encoder_skip_error}
 unsigned char len = 0; // lenght of receive message
 byte len_transmit = 0; // lenght of transmit can message
 static byte len_hb = 1;
