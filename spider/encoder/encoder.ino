@@ -40,11 +40,13 @@ const int operation_recive = 0x01; //0x01
 const int reset_node_recive = 0x81; //0x81
 const int reset_comunication_recive = 0x82; //0x82
 
+const byte led_preoperation = 4;
+const byte led_operation = 5;
 
-byte counter1_channelA = A0;
-byte counter1_channelB = A1;
-byte counter2_channelA = A2;
-byte counter2_channelB = A3;
+const byte counter1_channelA = A0;
+const byte counter1_channelB = A1;
+const byte counter2_channelA = A2;
+const byte counter2_channelB = A3;
 
 byte cs_pin = 10; // SPI CS pin number
 
@@ -100,6 +102,7 @@ void setup () {
   wdt_enable(WDTO_500MS);  //wdt reset_15MS; 30MS; 60ms; 120MS; 250MS; 500MS; 1S; 2S; 4S; 8S
   sending_can_message (can_adress_hb, buf_transmit_hb, len_hb);
   state_node = preoperation;
+  preoperation_led_settings();
 }
 
 /*----------------------- LOOP -----------------------------------*/

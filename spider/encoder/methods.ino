@@ -95,8 +95,22 @@ void pins_initial() {
   pinMode(counter1_channelB, INPUT);
   pinMode(counter2_channelA, INPUT);
   pinMode(counter2_channelB, INPUT);
+
+  pinMode(led_preoperation, OUTPUT);
+  pinMode(led_operation, OUTPUT);
 }
 
+/*----------------------preoperation_led_settings------------------------------------*/
+void preoperation_led_settings() {
+  digitalWrite(led_operation, LOW);
+  digitalWrite(led_preoperation, HIGH);
+}
+
+/*----------------------operation_led_settings------------------------------------*/
+void operation_led_settings() {
+  digitalWrite(led_preoperation, LOW);
+  digitalWrite(led_operation, HIGH);
+}
 
 /*-------------------------- timer0_flag_status_check  -------------------------*/
 
@@ -153,10 +167,12 @@ void can_message_recive_check () {
             case operation_recive:
               state_node = operation;
               buf_transmit_hb [0] = operation_transmit;
+              operation_led_settings();
               break;
             case preoperation_recive:
               state_node = preoperation;
               buf_transmit_hb [0] = preoperation_transmit;
+              preoperation_led_settings();
               break;
             case reset_node_recive:
               state_node = reset;
