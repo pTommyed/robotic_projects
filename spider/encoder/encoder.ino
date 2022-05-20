@@ -20,6 +20,8 @@
 
 /*----------------------- DEFINITION -----------------------------------*/
 
+void (*hard_reset)(void) = (void (*)())0x0000; //hard reset of modul to defalut state 
+
 enum states_node {
   bootup,
   preoperation,
@@ -114,7 +116,7 @@ void loop (){
       hb_flag_check ();
       break;
     case reset:
-
+      hard_reset();
       break;
   }
   
