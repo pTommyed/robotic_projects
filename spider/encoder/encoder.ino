@@ -98,11 +98,10 @@ void setup () {
   pins_initial();
   encoders_init();
   can_initial();
+  bootup_led_indication();
   timer0_initial();
   wdt_enable(WDTO_500MS);  //wdt reset_15MS; 30MS; 60ms; 120MS; 250MS; 500MS; 1S; 2S; 4S; 8S
-  sending_can_message (can_adress_hb, buf_transmit_hb, len_hb);
-  state_node = preoperation;
-  preoperation_led_settings();
+  switch_to_preoperation();
 }
 
 /*----------------------- LOOP -----------------------------------*/

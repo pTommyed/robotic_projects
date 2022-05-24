@@ -34,11 +34,11 @@ void can_mask_initial(){
 
 /*-----------------------CAN filters initialization--------------------------------*/
 void can_filters_initial(){
-  while(CAN.init_Filt(0, 0, can_adress_nmt) != 0){
+  while(CAN.init_Filt(0, 0, can_adress_nmt) != 0){ //nmt adress
     Serial.print("-");
     delay(10);
   }
-  while(CAN.init_Filt(1, 0, can_adress_sync) != 0){
+  while(CAN.init_Filt(1, 0, can_adress_sync) != 0){ // sync adress
     Serial.print("-");
     delay(100);
   }
@@ -112,6 +112,29 @@ void operation_led_settings() {
   digitalWrite(led_operation, HIGH);
 }
 
+/*----------------------bootup_led_indication------------------------------------*/
+void bootup_led_indication() {
+  for (int temp = 0;temp < 5; temp++) {
+    wdt_reset (); // Reset watchdog counter
+    digitalWrite(led_operation, LOW);
+    digitalWrite(led_preoperation, LOW);
+    delay(100);
+    digitalWrite(led_operation, HIGH);
+    digitalWrite(led_preoperation, HIGH);
+    delay(100);
+  }
+}
+
+/*----------------------switch_to_preoperation------------------------------------*/
+void switch_to_preoperation() {
+  sending_can_message (can_adress_hb, buf_transmit_hb, len_hb);
+  timer0_counter =0;
+  hb_flag = 0;
+  state_node = preoperation;
+  buf_transmit_hb[0] = preoperation_transmit;
+  preoperation_led_settings();
+}
+
 /*-------------------------- timer0_flag_status_check  -------------------------*/
 
 void timer0_flag_check () {
@@ -157,8 +180,8 @@ void buf_transmit_pdo_erros_clear () {
 
 void can_message_recive_check () {
   if (CAN.checkReceive() == CAN_MSGAVAIL) {
+    sync_message_rec_flag = 0;
     can_message_recive();
-
     if (can_message_id_recive == can_adress_sync) {
       sync_message_rec_flag = 1;
     } else if (can_message_id_recive == can_adress_nmt) {
@@ -204,7 +227,6 @@ void can_message_clear() {
 /*-------------------------- can message recive -------------------------*/
 
 void can_message_recive() {
-  can_message_id_recive = CAN.getCanId();
   while (CAN.readMsgBuf(&len, buf_recive) != CAN_OK) {
     if (timer0_flag == 1) {
       buf_transmit_pdo_erros[1] = read_message_error;
@@ -212,6 +234,7 @@ void can_message_recive() {
       return;
     }
   }
+  can_message_id_recive = CAN.getCanId();
 }
 
 /*----------------------serial-print_recive_can_message------------------------------------*/
