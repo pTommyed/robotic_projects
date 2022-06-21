@@ -40,8 +40,8 @@ const int operation_recive = 0x01; //0x01
 const int reset_node_recive = 0x81; //0x81
 const int reset_comunication_recive = 0x82; //0x82
 
-const byte led_preoperation = 4;
-const byte led_operation = 5;
+const byte led_preoperation = 4; // red
+const byte led_operation = 5; //green
 
 const byte counter1_channelA = A0;
 const byte counter1_channelB = A1;
