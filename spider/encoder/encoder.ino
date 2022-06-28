@@ -74,7 +74,7 @@ const int can_adress_pdo_encoder = 0x180 + id_node; //0x180 transmit encoder cou
 const int can_adress_pdo_error = 0x280 + id_node; //0x280 transmit errors codes
 const int can_adress_hb = 0x700 + id_node; //0x700  transmit HB status
 const int can_adress_nmt = 0x00; //0x00 change states
-const int can_adress_sync = 0x50; //0X50 sync adress
+const int can_adress_sync = 0x201; //0X201 sync adress
 int  can_message_id_recive; //can message of receive message
 byte buf_recive [8]; //buffer of receive message
 byte buf_transmit_hb [] = {bootup_transmit}; //buffer of transmit message
