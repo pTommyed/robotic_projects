@@ -1,0 +1,14 @@
+posílat:
+HB 0X700+_ID_modul - 1 byte stav (operation (0x05), preoperation(0x7f), stop(0x04), bootup (0x00)) (posílat 1krát za S)
+PDO- 0x180+ID_modulu: encodery 1 zpráva 8 bytu rozdìlit na pùl a oba encodery v jedné zprávì nejvýší váha je na 7. bytu, signed èíslo
+PDO- 0x280+ID:modulu: erroro
+
+
+pøíjímat:
+Sync (spyder) - (pøilepim z encoderu ze spydera)
+zprávu NMT 0x0 (2 byty) 1. byte zmìna stavu stav: 0x01 (go to operation) 
+                                     0x02 (go to stop) - nepotøebujem
+                                     0x80 (go to preoperation)
+                                     0x81 a 0x82 (reset modul)   
+                                 a 2. byte adresa 0x00 (brodacast) nebo adresa modulu Ox700+ID_modulu
+                                  
