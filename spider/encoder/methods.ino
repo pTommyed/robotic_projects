@@ -9,7 +9,7 @@ void serial_initial() {
 /*-----------------------CAN initialization--------------------------------*/
 void can_initial(){
   Serial.println("Setup can..");
-  while(CAN.begin(CAN_1000KBPS, MCP_8MHz) != CAN_OK){
+  while(CAN.begin(CAN_1000KBPS, MCP_8MHz) != CAN_OK){ 
     Serial.print(".");
     delay(1000);
   }
@@ -263,7 +263,6 @@ void sending_can_message (int can_adress, byte *message_buffer, byte lenght_mess
       return;
     }  
   }
-
 }
 
 /*----------------------serial-print_encoders------------------------------------*/
