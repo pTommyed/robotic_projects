@@ -153,7 +153,9 @@ void timer0_flag_check () {
 void hb_flag_check () {
   if (hb_flag == 1) {
     hb_flag = 0;
+    buf_transmit_hb [0] = cycle_counter;
     sending_can_message (can_adress_hb, buf_transmit_hb, len_hb);
+    counter_cycle();
 
     error_check ();
   }
@@ -263,6 +265,7 @@ void sending_can_message (int can_adress, byte *message_buffer, byte lenght_mess
       return;
     }  
   }
+  //CAN.sendMsgBuf(can_adress, 0, lenght_message, message_buffer);
 
 }
 
@@ -339,4 +342,14 @@ void pdo_encoders_message_create() {
   buf_transmit_pdo_encoders[2] = (enc_counter_2 >> 16) & 0xFF;
   buf_transmit_pdo_encoders[1] = (enc_counter_2 >> 8) & 0xFF;
   buf_transmit_pdo_encoders[0] = enc_counter_2  & 0xFF;
+}
+
+/*---------------------------- counter_cycle--------------------------------------------------------------------------------------------------*/
+void counter_cycle(){
+  buf_transmit_hb [0] = cycle_counter;
+  if (cycle_counter == 255){
+    cycle_counter = 1;
+  } else {
+     cycle_counter = cycle_counter + 1;
+    }
 }

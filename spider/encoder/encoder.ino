@@ -86,6 +86,8 @@ const byte len_hb = 1;
 const byte len_pdo_encoders = 8;
 const byte len_pdo_errors = 5; 
 
+byte cycle_counter = 0;
+
 
 const byte read_message_error = 1;
 const byte clear_message_error = 2;
